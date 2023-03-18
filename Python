@@ -1,0 +1,263 @@
+import tkinter as tk
+import random
+import numpy as np
+
+# buttonID["text"] = value
+
+def printMattrix():  # Printer arrayet i Python konsollen. Umiddelbart ligegyldig ud over som test.
+
+    print(" ", DM[0], "\n ",
+          DM[1], "\n ",
+          DM[2], "\n ",
+          DM[3], "\n ",
+          DM[4], "\n ", )
+
+
+def calculateScore():
+    totalScore = 0
+    for x in range(5):
+        for j in range(3):
+            if DM[x, j] == DM[x, j + 1] == DM[x, j + 2] or DM[x, j] + 2 == DM[x, j + 1] + 1 == DM[
+                x, j + 2]:  # Hvis de er lig hinande eller +1 vandret
+                totalScore = totalScore + (DM[x, j])
+
+            if DM[j, x] == DM[j + 1, x] == DM[j + 2, x] or DM[j, x] + 2 == DM[j + 1, x] + 1 == DM[
+                j + 2, x]:  # Hvis de er lig hinanden eller +1 lodret
+                totalScore = totalScore + (DM[j, x])
+
+    return totalScore #Scoren bliver beregnet, og returneret
+
+
+def rollDies():
+    roll1 = random.randint(1, 6)
+    roll2 = random.randint(1, 6)
+    roll = roll1 + roll2
+    return roll
+
+
+def playGame():
+    roll = rollDies()
+    reroll = 2
+    i = 0
+    while i < 25:
+        if reroll > 0:
+            choice = int(input(
+                f"Du har slået: {roll} \n Du har {reroll} tilbage. Tryk 2 for at kassere, eller 1 for at placere\n"))
+
+        else:
+            print(f"Du har slået: {roll}\n")
+            choice = 1
+
+        if choice == 2:  # Tjek om der er flere omslag, og hvilken vej brugeren har valgt
+
+            roll = rollDies()
+            reroll = reroll - 1
+            print("Slag kasseret\n")
+
+        if choice == 1:  # Valg to, så skal tallet placeres.
+            Vertical = int(input("Hvilken række skal den placeres i?"))
+            Horizontal = int(input("Hvilken kolonne skal den placeres i?"))
+
+            if 5 >= Vertical > 0 >= DM[
+                Vertical - 1, Horizontal - 1] and 0 < Horizontal <= 5:  # Hvis tallet passer med matrixen, bliver den skrevet ind.
+                DM[Vertical - 1, Horizontal - 1] = roll
+                roll = rollDies()
+                printMattrix()
+                calculateScore()
+                i = i + 1
+            else:
+                print("\nKolonnen og rækken skal være mellem 1 og 5, og pladsen må ikke være optaget\n")
+
+
+"""
+def dirBut():
+    W = {}  # empty dictionary, som knappernes navn og værdi kommer ind på.
+    for i in range(25):
+        W[f"Button{i}"] = 0
+    print(W["Button2"]) #Du nævner directoriet og skriver keyen i firkantklamper
+
+
+
+def putValue(value):
+            buttonIDtxt.set(value)
+            btn_text1.set(option)
+            print(value)
+"""
+
+
+def makeBut():
+
+    dirBut = {}  # empty dictionary, som knappernes navn og værdi kommer ind på.
+    for i in range(25):
+        dirBut[f"Button{i}"] = 0
+        #print(dirBut)
+
+    DomatRow = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 13, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24])
+    DomatArRow = DomatRow.reshape(5, 5)
+
+    def editName(value):
+        btn1_text.set(value)
+
+
+
+    for i in range(5):#Rækkerne nedaf
+        window.columnconfigure(i, weight=1, minsize=30)
+        window.rowconfigure(i, weight=1, minsize=30)
+
+        for j in range(5): #Rækkerne henad
+            frame = tk.Frame(
+                master=window, #Hvor er knapperne
+                relief=tk.RAISED, #Raised laver linjerne mellem knapperne FLAT, SUNKEN, RAISED, GROOVE, RIDGE
+                borderwidth=10 #Hvor tyk er kanten
+            )
+
+            number = j+1 + i * 5
+            buttonID = list(dirBut.keys()).index("Button1")
+            print(buttonID)
+            btn1_text = tk.StringVar()
+            frame.grid(row=i, column=j, padx=0, pady=0) #Her placeres felterne i rækker og kolonner. padx og pady, beskriver afstanden til andre felter
+            btn1 = tk.Button(master=frame, textvariable=btn1_text, command=lambda: editName(number))#Her bliver felterne oprettet som knapper, og text kommer på
+            btn1.pack(padx=1.5, pady=1.5) #Her bliver deres størrelse lavet
+            btn1_text.set("0")
+
+
+"""
+    # buttonID = [f"Button{number}"]
+def editName(name):
+    btn1_text.set(name)
+
+
+
+window = tk.Tk()  # Her laves selve pop-up vinduet
+
+window.columnconfigure(5, weight=1, minsize=30)
+window.rowconfigure(5, weight=1, minsize=30)
+frame = tk.Frame(
+        master=window,  # Hvor er knapperne
+        relief=tk.RAISED,  # Raised laver linjerne mellem knapperne FLAT, SUNKEN, RAISED, GROOVE, RIDGE
+        borderwidth=10  # Hvor tyk er kanten
+            )
+
+btn1_text = tk.StringVar()
+btn1 = tk.Button(master=frame, textvariable=btn1_text, command= lambda: editName("Name"))
+frame.grid(row=1, column=2, padx=0, pady=0)
+print("Knap lavet")
+btn1_text.set("a")
+
+"""
+
+# Domat = np.ones(25)
+# Domat = np.array([0] * 25)
+
+
+Domat = np.array([0] * 25)  # Her laves et array med 25 0'er
+DM = Domat.reshape(5, 5)  # Her omrangeres det til et 5*5 grid
+
+
+
+
+# print(W["Button1"])
+
+window = tk.Tk()
+
+makeBut() #Her laves knapperne
+window.mainloop()
+printMattrix()
+playGame()
+totalScore = calculateScore()
+print(totalScore)
+
+"""
+root = tk.Tk()
+
+
+def update_btn_text(option):  #Option er en variabel som bliver proppet ind i arrayet.
+    if option == "Højre":
+        btn_text1.set(option)
+    elif option == "Venstre":
+        btn_text2.set(option)
+
+
+gitter = np.array(25)
+#print(gitter)
+#window = tk.Tk()
+
+
+root.title("DoMat")
+
+btn_text1 = tk.StringVar()
+btn_text2 = tk.StringVar()
+
+#btn = tk.Button(root, textvariable=btn_text, command=update_btn_text)
+btn1 = tk.Button(root, textvariable=btn_text1, command= lambda: update_btn_text(" Højre "))
+btn2 = tk.Button(root, textvariable=btn_text2, command=lambda: update_btn_text(" Venstre "))
+
+
+#btn_text.set("a")
+
+btn1.pack()
+btn2.pack()
+
+root.mainloop()
+
+
+#window = Tk()
+#window.title("MatDo")
+
+
+#mainframe = ttk.Frame()
+#s = ttk.Style() #Laver et "Style" tema"
+#s.configure('Danger.TFrame', background='blue', borderwidth=50, relief='lowered') #Som her bliver konfigureret
+#ttk.Frame(root, width=50, height=50, style='Danger.TFrame').grid()
+#window.columnconfigure(0, weight=1)
+#window.rowconfigure(0, weight=1)
+
+#feet = StringVar()
+#feet_entry = ttk.Entry(mainframe, width=7, textvariable=feet)  #Laver et tekstfelt hvor man kan skrive noget ind i.
+#feet_entry.grid(column=20, row=10)
+
+#meters = StringVar()
+#ttk.Label(mainframe, textvariable=meters).grid(column=2, row=2, sticky=(W, E))
+#window.mainloop()
+
+
+
+
+from tkinter import *
+from tkinter import ttk
+
+def calculate(*args):
+    try:
+        value = float(feet.get())
+        meters.set(int(0.3048 * value * 10000.0 + 0.5)/10000.0)
+    except ValueError:
+        pass
+
+root = Tk()
+root.title("Feet to Meters")
+
+mainframe = ttk.Frame(root, padding="3 3 12 12")
+mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
+
+feet = StringVar()
+feet_entry = ttk.Entry(mainframe, width=7, textvariable=feet)
+feet_entry.grid(column=2, row=1, sticky=(W, E))
+
+meters = StringVar()
+ttk.Label(mainframe, textvariable=meters).grid(column=2, row=2, sticky=(W, E))
+
+ttk.Button(mainframe, text="Calculate", command=calculate).grid(column=3, row=3, sticky=W)
+
+ttk.Label(mainframe, text="feet").grid(column=3, row=1, sticky=W)
+ttk.Label(mainframe, text="is equivalent to").grid(column=1, row=2, sticky=E)
+ttk.Label(mainframe, text="meters").grid(column=3, row=2, sticky=W)
+
+for child in mainframe.winfo_children():
+    child.grid_configure(padx=5, pady=5)
+
+feet_entry.focus()
+root.bind("<Return>", calculate)
+
+root.mainloop() """
