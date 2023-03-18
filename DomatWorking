@@ -1,0 +1,104 @@
+import random
+import numpy as np
+
+def printMattrix():  # Printer arrayet i Python konsollen. Umiddelbart ligegyldig ud over som test.
+
+    print(" ", DM[0], "\n ",
+          DM[1], "\n ",
+          DM[2], "\n ",
+          DM[3], "\n ",
+          DM[4], "\n ", )
+
+def calculateScore():
+    totalScore = 0
+    for x in range(5):
+        for j in range(3):
+            if DM[x, j] == DM[x, j + 1] == DM[x, j + 2] or DM[x, j] + 2 == DM[x, j + 1] + 1 == DM[
+                x, j + 2]:  # Hvis de er lig hinande eller +1 vandret
+                totalScore = totalScore + (DM[x, j])
+
+            if DM[j, x] == DM[j + 1, x] == DM[j + 2, x] or DM[j, x] + 2 == DM[j + 1, x] + 1 == DM[
+                j + 2, x]:  # Hvis de er lig hinanden eller +1 lodret
+                totalScore = totalScore + (DM[j, x])
+
+    return totalScore #Scoren bliver beregnet, og returneret
+
+def rollDies():
+    roll1 = random.randint(1, 6)
+    roll2 = random.randint(1, 6)
+    roll = roll1 + roll2
+    return roll
+
+def playGame():
+    rollVal = rollDies()
+    reroll = 2
+    i = 0
+    while i < 27:
+        if reroll > 0:
+            choice = int(input(
+                f"Du har slået: {rollVal} \n Du har {reroll} omslag tilbage. Tryk 1 for at placere, 2 for at ændre værdi og placere eller 3 for at kassere\n"))
+
+        else:
+            print(f"Du har slået: {roll}\n")
+            choice = 1
+
+
+        if choice == 1:  # Valg to, så skal tallet placeres.
+            roll = rollVal
+            Vertical = int(input("Hvilken række skal den placeres i?"))
+            Horizontal = int(input("Hvilken kolonne skal den placeres i?"))
+
+            if 5 >= Vertical > 0 >= DM[
+                Vertical - 1, Horizontal - 1] and 0 < Horizontal <= 5:  # Hvis tallet passer med matrixen, bliver den skrevet ind.
+                DM[Vertical - 1, Horizontal - 1] = roll
+                rollVal = rollDies()
+                printMattrix()
+                print("Din score er", calculateScore())
+                i = i + 1
+            else:
+                print("\nKolonnen og rækken skal være mellem 1 og 5, og pladsen må ikke være optaget\n")
+
+        if choice == 2:
+            rollUser = int(input(f"Hvilken værdi ønsker du? Værdien skal være mellem 2 og {rollVal}\n"))
+            if rollUser <= rollVal:
+                roll = rollUser
+                print(f"Ok, slaget er ændret til {roll}\n")
+                choice = 4
+            else:
+                print("Dit valgte tal er højere end slaget. Derfor kan det ikke lade sige gøre.\n\n")
+
+
+        if choice == 3:  # Tjek om der er flere omslag, og hvilken vej brugeren har valgt
+
+            roll = rollDies()
+            reroll = reroll - 1
+            print("Slag kasseret\n")
+
+        if choice == 4:  # Valg to, så skal tallet placeres.
+            Vertical = int(input("Hvilken række skal den placeres i?"))
+            Horizontal = int(input("Hvilken kolonne skal den placeres i?"))
+
+            if 5 >= Vertical > 0 >= DM[
+                Vertical - 1, Horizontal - 1] and 0 < Horizontal <= 5:  # Hvis tallet passer med matrixen, bliver den skrevet ind.
+                DM[Vertical - 1, Horizontal - 1] = roll
+                rollVal = rollDies()
+                printMattrix()
+                print("Din score er", calculateScore())
+                i = i + 1
+            else:
+                print("\nKolonnen og rækken skal være mellem 1 og 5, og pladsen må ikke være optaget\n")
+
+        if i == 27-reroll:
+
+            print(f"Spillet er færdigt. Jeg håber du vandt over din modstander :)")
+            quit()
+
+
+Domat = np.array([0] * 25)  # Her laves et array med 25 0'er
+DM = Domat.reshape(5, 5)  # Her omrangeres det til et 5*5 grid
+
+printMattrix()
+playGame()
+totalScore = calculateScore()
+print(totalScore)
+
